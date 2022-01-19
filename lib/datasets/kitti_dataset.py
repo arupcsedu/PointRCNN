@@ -7,7 +7,7 @@ from PIL import Image
 
 
 class KittiDataset(torch_data.Dataset):
-    def __init__(self, root_dir, split='train'):
+    def __init__(self, root_dir, logger=None,split='train'):
         self.split = split
         is_test = self.split == 'test'
         self.imageset_dir = os.path.join(root_dir, 'KITTI', 'object', 'testing' if is_test else 'training')
@@ -21,6 +21,7 @@ class KittiDataset(torch_data.Dataset):
         self.calib_dir = os.path.join(self.imageset_dir, 'calib')
         self.label_dir = os.path.join(self.imageset_dir, 'label_2')
         self.plane_dir = os.path.join(self.imageset_dir, 'planes')
+        self.logger = logger
 
     def get_image(self, idx):
         assert False, 'DO NOT USE cv2 NOW, AVOID DEADLOCK'
@@ -44,6 +45,7 @@ class KittiDataset(torch_data.Dataset):
 
     def get_calib(self, idx):
         calib_file = os.path.join(self.calib_dir, '%06d.txt' % idx)
+        #logger.info('calib_file path: %s' % calib_file)
         assert os.path.exists(calib_file)
         return calibration.Calibration(calib_file)
 
